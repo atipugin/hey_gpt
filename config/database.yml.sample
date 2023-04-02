@@ -1,0 +1,5 @@
+---
+development: &default
+  adapter: postgresql
+  database: hey_gpt_development
+  encoding: utf8
