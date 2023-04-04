@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
+require_dependency 'tokenizer'
+
 module OpenAI
   class BuildChatMessagesService
     MAX_TOKENS = 4096
-
-    thread_cattr_accessor :tokenizer, default: Tokenizers.from_pretrained('gpt2')
 
     def initialize(chat:, text:)
       @chat = chat
@@ -49,7 +49,7 @@ module OpenAI
     end
 
     def tokenizer
-      self.class.tokenizer
+      Tokenizer.instance.gpt2
     end
   end
 end
