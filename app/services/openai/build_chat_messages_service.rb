@@ -18,7 +18,14 @@ module OpenAI
     private
 
     def system_message
-      { role: 'system', content: 'You are a helpful assistant.' }
+      {
+        role: 'system',
+        content: <<~TXT.squish
+          You are a helpful assistant.
+          Answer as concisely as possible.
+          Current date is #{Time.zone.today}.
+        TXT
+      }
     end
 
     def history_message
