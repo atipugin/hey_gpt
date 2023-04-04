@@ -18,3 +18,7 @@ group :development, :test do
   gem 'rubocop', '~> 1.48', require: false
   gem 'rubocop-rails', require: false
 end
+
+group :development do
+  gem 'annotate', require: false
+end

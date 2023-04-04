@@ -4,3 +4,10 @@
 require_relative "config/application"
 
 Rails.application.load_tasks
+
+if Rails.env.development?
+  require 'annotate'
+
+  Annotate.set_defaults(models: true, show_indexes: true)
+  Annotate.load_tasks
+end
