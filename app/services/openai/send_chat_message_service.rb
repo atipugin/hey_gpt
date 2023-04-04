@@ -8,15 +8,13 @@ module OpenAI
     end
 
     def call
-      query = ChatQuery.new(chat: @chat, text: @text)
-      return if query.invalid?
-
       client = Client.new
+      messages = BuildChatMessagesService.new(chat: @chat, text: @text).call
       response = client.chat(
         parameters: {
-          model: query.model,
-          messages: query.messages,
-          temperature: query.temperature
+          model: 'gpt-3.5-turbo',
+          messages:,
+          temperature: 0.7
         }
       )
 
