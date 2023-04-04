@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: users
+# Table name: chats
 #
 #  id            :bigint           not null, primary key
 #  created_at    :datetime         not null
@@ -12,13 +12,13 @@
 #
 # Indexes
 #
-#  index_users_on_telegram_id  (telegram_id) UNIQUE
+#  index_chats_on_telegram_id  (telegram_id) UNIQUE
 #
-class User < ApplicationRecord
+class Chat < ApplicationRecord
   validates :telegram_id, presence: true, uniqueness: true
   validates :telegram_data, presence: true
 
-  def telegram_user
-    @telegram_user ||= Telegram::Bot::Types::User.new(telegram_data)
+  def telegram_chat
+    @telegram_chat ||= Telegram::Bot::Types::Chat.new(telegram_data)
   end
 end
