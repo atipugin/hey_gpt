@@ -16,7 +16,10 @@ module Telegram
       chat.telegram_data = message.chat.to_compact_hash
       chat.save
 
-      gpt_response = OpenAI::SendChatMessageService.new(message: message.text).call
+      chat.messages.create(text: message.text)
+
+      gpt_response = OpenAI::SendChatMessageService.new(chat: chat, text: message.text).call
+      chat.messages.create(text: gpt_response)
       client.api.send_message(chat_id: chat.telegram_id, text: gpt_response)
     end
   end

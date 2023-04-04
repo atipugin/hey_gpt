@@ -2,16 +2,22 @@
 
 module OpenAI
   class SendChatMessageService
-    def initialize(message:)
-      @message = message
+    def initialize(chat:, text:)
+      @chat = chat
+      @text = text
     end
 
     def call
       client = OpenAI::Client.new
+      messages = [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'assistant', content: "Our chat history in JSON format: #{@chat.history.to_json}" },
+        { role: 'user', content: @text }
+      ]
       response = client.chat(
         parameters: {
           model: 'gpt-3.5-turbo',
-          messages: [{ role: 'user', content: @message }],
+          messages:,
           temperature: 0.7
         }
       )

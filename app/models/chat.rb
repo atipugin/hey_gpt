@@ -15,10 +15,16 @@
 #  index_chats_on_telegram_id  (telegram_id) UNIQUE
 #
 class Chat < ApplicationRecord
+  has_many :messages, dependent: :destroy
+
   validates :telegram_id, presence: true, uniqueness: true
   validates :telegram_data, presence: true
 
   def telegram_chat
     @telegram_chat ||= Telegram::Bot::Types::Chat.new(telegram_data)
+  end
+
+  def history
+    messages.order(created_at: :asc).pluck(:text)
   end
 end
