@@ -23,8 +23,4 @@ class Chat < ApplicationRecord
   def telegram_chat
     @telegram_chat ||= Telegram::Bot::Types::Chat.new(telegram_data)
   end
-
-  def history
-    messages.order(created_at: :asc).pluck(:text)
-  end
 end

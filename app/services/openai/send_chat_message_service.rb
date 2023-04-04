@@ -8,17 +8,15 @@ module OpenAI
     end
 
     def call
-      client = OpenAI::Client.new
-      messages = [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'assistant', content: "Our chat history in JSON format: #{@chat.history.to_json}" },
-        { role: 'user', content: @text }
-      ]
+      query = ChatQuery.new(chat: @chat, text: @text)
+      return if query.invalid?
+
+      client = Client.new
       response = client.chat(
         parameters: {
-          model: 'gpt-3.5-turbo',
-          messages:,
-          temperature: 0.7
+          model: query.model,
+          messages: query.messages,
+          temperature: query.temperature
         }
       )
 

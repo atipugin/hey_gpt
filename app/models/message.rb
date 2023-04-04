@@ -18,4 +18,6 @@ class Message < ApplicationRecord
   belongs_to :chat
 
   validates :text, presence: true
+
+  scope :recent, -> { order(created_at: :desc) }
 end
