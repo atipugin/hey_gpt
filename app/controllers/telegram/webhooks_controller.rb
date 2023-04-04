@@ -3,7 +3,7 @@
 module Telegram
   class WebhooksController < ApplicationController
     def create
-      Rails.logger.debug(webhook_params)
+      ProcessWebhookJob.perform_later(webhook_params)
       head :ok
     end
 
