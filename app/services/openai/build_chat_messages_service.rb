@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_dependency 'tokenizer'
+require 'tokenizer'
 
 module OpenAI
   class BuildChatMessagesService
