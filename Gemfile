@@ -9,6 +9,7 @@ gem 'pg', '~> 1.1'
 gem 'pry-rails'
 gem 'puma', '~> 5.0'
 gem 'rails', '~> 7.0.4', '>= 7.0.4.3'
+gem 'ruby-openai', require: 'openai'
 gem 'sidekiq'
 gem 'telegram-bot-ruby', require: 'telegram/bot'
 

@@ -10,7 +10,9 @@ module Telegram
       client = Bot::Client.new(ENV.fetch('TELEGRAM_BOT_TOKEN'))
       update = Bot::Types::Update.new(@webhook)
       message = update.current_message
-      client.api.send_message(chat_id: message.chat.id, text: message.text)
+      client.api.send_chat_action(chat_id: message.chat.id, action: 'typing')
+      chat_response = OpenAI::SendChatMessageService.new(message: message.text).call
+      client.api.send_message(chat_id: message.chat.id, text: chat_response)
     end
   end
 end
