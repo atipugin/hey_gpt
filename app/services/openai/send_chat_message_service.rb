@@ -22,6 +22,11 @@ module OpenAI
         }
       )
 
+      unless response.ok?
+        error = response['error']
+        Sentry.capture_message(error['message'], extra: error.except('message'))
+      end
+
       # TODO: Add error handling
       response.dig('choices', 0, 'message', 'content')
     end
