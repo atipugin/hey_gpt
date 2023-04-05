@@ -9,6 +9,7 @@
 #  updated_at :datetime         not null
 #  chat_id    :bigint           not null
 #  text       :text             not null
+#  from_user  :boolean          default(FALSE), not null
 #
 # Indexes
 #
@@ -20,4 +21,5 @@ class Message < ApplicationRecord
   validates :text, presence: true
 
   scope :recent, -> { order(created_at: :desc) }
+  scope :from_user, -> { where(from_user: true) }
 end

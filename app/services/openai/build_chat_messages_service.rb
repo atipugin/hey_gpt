@@ -22,8 +22,7 @@ module OpenAI
         role: 'system',
         content: <<~TXT.squish
           You are a helpful assistant.
-          Answer as concisely as possible.
-          Current date is #{Time.zone.today}.
+          If you have chat history with user, consider using it to answer user questions.
         TXT
       }
     end
@@ -32,23 +31,29 @@ module OpenAI
       return if @chat.messages.empty?
 
       # Figure out how many tokens for history we have
-      prefix = 'Our chat history as JSON: '
-      encodings = tokenizer.encode_batch([system_message[:content], @text, prefix])
+      history_template = <<~TXT.squish
+        This is chat history as JSON array: %s.
+        Messages are sorted by time in descending order.
+        Message that starts with "U:" belongs to user.
+        Message that starts with "A:" belongs to you.
+      TXT
+      encodings = tokenizer.encode_batch([system_message[:content], history_template, @text])
       tokens_left = MAX_TOKENS - encodings.map { |e| e.tokens.size }.sum
 
       # Populate `entries` until we reach the limit
       entries = []
       tokens_count = 0
       @chat.messages.recent.each do |message|
-        tokens_count += tokenizer.encode(message.text).tokens.size
+        entry = "#{message.from_user? ? 'U' : 'A'}: #{message.text}"
+        tokens_count += tokenizer.encode(entry).tokens.size
         break if tokens_count > tokens_left
 
-        entries << message.text
+        entries << entry
       end
 
       return if entries.blank?
 
-      { role: 'assistant', content: prefix + entries.to_json }
+      { role: 'assistant', content: format(history_template, entries.to_json) }
     end
 
     def user_message
