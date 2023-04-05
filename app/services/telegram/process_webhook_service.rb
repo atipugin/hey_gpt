@@ -2,28 +2,54 @@
 
 module Telegram
   class ProcessWebhookService
+    delegate :current_message, to: :update
+
     def initialize(webhook:)
       @webhook = webhook
     end
 
     def call
-      client = Bot::Client.new(ENV.fetch('TELEGRAM_BOT_TOKEN'))
-      update = Bot::Types::Update.new(@webhook)
-      message = update.current_message
-      client.api.send_chat_action(chat_id: message.chat.id, action: 'typing')
+      return if skip_processing?
 
-      chat = Chat.find_or_initialize_by(telegram_id: message.chat.id)
-      chat.telegram_data = message.chat.to_compact_hash
+      client.api.send_chat_action(chat_id: current_message.chat.id, action: 'typing')
+
+      chat = Chat.find_or_initialize_by(telegram_id: current_message.chat.id)
+      chat.telegram_data = current_message.chat.to_compact_hash
       chat.save
 
-      # TODO: Respond to user with something
-      return if message.text.blank?
+      message = chat.messages.find_or_initialize_by(telegram_id: current_message.message_id)
+      message.telegram_data = current_message.to_compact_hash
 
-      chat.messages.from_user.create(text: message.text)
+      if current_message.from.present?
+        user = User.find_or_initialize_by(telegram_id: current_message.from.id)
+        user.telegram_data = current_message.from.to_compact_hash
+        user.save
 
-      gpt_response = OpenAI::SendChatMessageService.new(chat:, text: message.text).call
-      chat.messages.create(text: gpt_response)
-      client.api.send_message(chat_id: chat.telegram_id, text: gpt_response)
+        message.user = user
+      end
+
+      message.save
+
+      answer_from_gpt = OpenAI::SendChatMessageService.new(message:).call
+      response = client.api.send_message(chat_id: chat.telegram_id, text: answer_from_gpt)
+      return unless response['ok']
+
+      message_sent = Telegram::Bot::Types::Message.new(response['result'])
+      chat.messages.create(telegram_id: message_sent.message_id, telegram_data: message_sent.to_compact_hash)
+    end
+
+    private
+
+    def skip_processing?
+      current_message.text.blank?
+    end
+
+    def update
+      @update ||= Telegram::Bot::Types::Update.new(@webhook)
+    end
+
+    def client
+      @client ||= Telegram::Bot::Client.new(ENV.fetch('TELEGRAM_BOT_TOKEN'))
     end
   end
 end

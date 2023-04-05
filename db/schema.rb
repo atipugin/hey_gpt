@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_05_045341) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_05_104032) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,11 +25,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_05_045341) do
   create_table "messages", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "telegram_id", null: false
+    t.jsonb "telegram_data", null: false
     t.bigint "chat_id", null: false
-    t.text "text", null: false
-    t.boolean "from_user", default: false, null: false
+    t.bigint "user_id"
     t.index ["chat_id"], name: "index_messages_on_chat_id"
+    t.index ["telegram_id"], name: "index_messages_on_telegram_id", unique: true
+    t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
-  add_foreign_key "messages", "chats"
+  create_table "users", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "telegram_id", null: false
+    t.jsonb "telegram_data", null: false
+    t.index ["telegram_id"], name: "index_users_on_telegram_id", unique: true
+  end
+
 end

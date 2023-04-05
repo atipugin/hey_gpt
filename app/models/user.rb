@@ -2,7 +2,7 @@
 
 # == Schema Information
 #
-# Table name: chats
+# Table name: users
 #
 #  id            :bigint           not null, primary key
 #  created_at    :datetime         not null
@@ -12,9 +12,9 @@
 #
 # Indexes
 #
-#  index_chats_on_telegram_id  (telegram_id) UNIQUE
+#  index_users_on_telegram_id  (telegram_id) UNIQUE
 #
-class Chat < ApplicationRecord
+class User < ApplicationRecord
   has_many :messages, dependent: :destroy
 
   validates :telegram_id, presence: true, uniqueness: true

@@ -2,14 +2,12 @@
 
 module OpenAI
   class SendChatMessageService
-    def initialize(chat:, text:)
-      @chat = chat
-      @text = text
+    def initialize(message:)
+      @message = message
     end
 
     def call
-      client = Client.new
-      messages = BuildChatMessagesService.new(chat: @chat, text: @text).call
+      messages = BuildChatMessagesService.new(message: @message).call
       response = client.chat(
         parameters: {
           model: 'gpt-3.5-turbo',
@@ -25,6 +23,12 @@ module OpenAI
 
       # TODO: Add error handling
       response.dig('choices', 0, 'message', 'content')
+    end
+
+    private
+
+    def client
+      @client ||= OpenAI::Client.new
     end
   end
 end
