@@ -9,13 +9,17 @@ module Telegram
     end
 
     def call
-      return failure(error: :no_text) if @message.text.blank?
+      return success if skip_processing?
       return handle_bot_command if bot_command?
 
       handle_regular_message
     end
 
     private
+
+    def skip_processing?
+      @message.text.blank?
+    end
 
     def bot_command?
       Array(@message.entities).any? { |e| e.type == 'bot_command' }
