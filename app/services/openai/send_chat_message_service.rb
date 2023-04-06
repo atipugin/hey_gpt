@@ -2,6 +2,8 @@
 
 module OpenAI
   class SendChatMessageService
+    include ActsAsService
+
     def initialize(message:)
       @message = message
     end
@@ -16,13 +18,14 @@ module OpenAI
         }
       )
 
-      unless response.ok?
+      if response.ok?
+        data = response.dig('choices', 0, 'message', 'content')
+        success(data:)
+      else
         error = response['error']
         Sentry.capture_message(error['message'], extra: error.except('message'))
+        failure(error: error['message'])
       end
-
-      # TODO: Add error handling
-      response.dig('choices', 0, 'message', 'content')
     end
 
     private
