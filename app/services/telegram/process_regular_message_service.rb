@@ -13,13 +13,11 @@ module Telegram
       chat = find_or_create_chat
       user = find_or_create_user
       message = find_or_create_message(chat:, user:)
-      result = ask_gpt(message:)
+      gpt_result = ask_gpt(message:)
 
-      return result unless result.success
+      return gpt_result if gpt_result.error
 
-      respond_to_chat(chat:, text: result.data)
-
-      success
+      respond_to_chat(chat:, text: gpt_result.data)
     end
 
     private
@@ -57,8 +55,12 @@ module Telegram
 
     def respond_to_chat(chat:, text:)
       response = client.api.send_message(chat_id: chat.telegram_id, text:)
+      return failure(error: :failed_to_respond_to_chat) unless response['ok']
+
       message_sent = Telegram::Bot::Types::Message.new(response['result'])
       chat.messages.create(telegram_id: message_sent.message_id, telegram_data: message_sent.to_compact_hash)
+
+      success
     end
 
     def client

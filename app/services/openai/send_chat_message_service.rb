@@ -22,9 +22,7 @@ module OpenAI
         data = response.dig('choices', 0, 'message', 'content')
         success(data:)
       else
-        error = response['error']
-        Sentry.capture_message(error['message'], extra: error.except('message'))
-        failure(error: error['message'])
+        failure(error: :failed_to_ask_gpt, data: response['error'])
       end
     end
 
