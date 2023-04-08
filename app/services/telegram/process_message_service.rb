@@ -3,34 +3,43 @@
 module Telegram
   class ProcessMessageService
     include ActsAsService
+    include HasTelegramBot
+
+    attr_reader :message
 
     def initialize(message:)
       @message = message
     end
 
     def call
-      return success if skip_processing?
-      return handle_bot_command if bot_command?
+      send_typing_action
 
-      handle_regular_message
+      return handle_unsupported_message if unsupported_message?
+      return handle_bot_command if message.bot_command?
+
+      handle_text_message
     end
 
     private
 
-    def skip_processing?
-      @message.text.blank?
+    def send_typing_action
+      telegram_bot.api.send_chat_action(chat_id: message.chat.telegram_id, action: 'typing')
     end
 
-    def bot_command?
-      Array(@message.entities).any? { |e| e.type == 'bot_command' }
+    def unsupported_message?
+      message.text.blank?
+    end
+
+    def handle_unsupported_message
+      telegram_bot.api.send_message(chat_id: message.chat.telegram_id, text: t('unsupported_message'))
     end
 
     def handle_bot_command
-      ProcessBotCommandService.new(message: @message).call
+      ProcessBotCommandService.new(message:).call
     end
 
-    def handle_regular_message
-      ProcessRegularMessageService.new(message: @message).call
+    def handle_text_message
+      ProcessTextMessageService.new(message:).call
     end
   end
 end

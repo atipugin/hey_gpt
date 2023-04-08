@@ -1,0 +1,5 @@
+---
+ru:
+  services:
+    telegram/process_message_service:
+      unsupported_message: 😒 Я умею работать только с текстовыми сообщения.
