@@ -32,6 +32,8 @@ module Telegram
 
     def handle_unsupported_message
       telegram_bot.api.send_message(chat_id: message.chat.telegram_id, text: t('unsupported_message'))
+
+      Result.new(success?: true)
     end
 
     def handle_bot_command
