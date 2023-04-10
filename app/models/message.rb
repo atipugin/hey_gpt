@@ -42,8 +42,6 @@ class Message < ApplicationRecord
   end
 
   def bot_command
-    return if entities.blank?
-
     @bot_command ||= begin
       entity = Array(entities).find { |e| e.type == 'bot_command' && e.offset.zero? }
 
