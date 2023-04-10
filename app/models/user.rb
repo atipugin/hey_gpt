@@ -19,4 +19,8 @@ class User < ApplicationRecord
 
   validates :telegram_id, presence: true, uniqueness: true
   validates :telegram_data, presence: true
+
+  def admin?
+    ENV.fetch('TELEGRAM_BOT_ADMIN_IDS').split(',').map(&:to_i).include?(telegram_id)
+  end
 end

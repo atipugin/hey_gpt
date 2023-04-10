@@ -36,6 +36,8 @@ module Telegram
     end
 
     def handle_stats_command
+      return handle_unsupported_command unless message.user.admin?
+
       users_count = User.count
       messages_count = Message.count
       telegram_bot.api.send_message(chat_id: message.chat.telegram_id,
