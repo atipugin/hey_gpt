@@ -1,24 +1,23 @@
-# README
+# 🤖 Hey GPT
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Rails app that powers [Hey GPT](https://t.me/h3y_gpt_bot) Telegram bot.
 
-Things you may want to cover:
+Basically it's just a webhook handler which processes each message in the background using Sidekiq. Something like this:
 
-* Ruby version
+```mermaid
+sequenceDiagram;
+  participant U as User;
+  participant B as Bot;
+  participant A as Rails app;
+  participant W as Sidekiq worker;
+  U->>B: sends message
+  B->>A: sends webhook with update
+  A->>W: enqueues webhook processing job
+  W->>U: sends message with response (usually from OpenAI API)
+```
 
-* System dependencies
+## Stack
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- Ruby/Rails/Sidekiq
+- PostgreSQL
+- Redis
