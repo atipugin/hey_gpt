@@ -13,7 +13,10 @@ module Telegram
 
     def call
       ask_gpt_result = OpenAI::AskGPTService.new(message:).call
-      return ask_gpt_result if ask_gpt_result.error
+      if ask_gpt_result.error
+        telegram_bot.api.send_message(chat_id: message.chat.telegram_id, text: t('something_went_wrong'))
+        return ask_gpt_result
+      end
 
       response = telegram_bot.api.send_message(chat_id: message.chat.telegram_id, text: ask_gpt_result.data)
       message_sent = Telegram::Bot::Types::Message.new(response['result'])
