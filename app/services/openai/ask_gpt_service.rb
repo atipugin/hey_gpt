@@ -14,7 +14,7 @@ module OpenAI
       response = openai.chat(parameters: { model: 'gpt-3.5-turbo', messages: chat_messages })
       return Result.new(success?: true, data: response['choices'][0]['message']['content']) if response.ok?
 
-      Result.new(success?: false, error: response['error']['message'])
+      Result.new(success?: false, error: response.dig('error', 'message'), data: response['error'])
     end
 
     private
