@@ -4,4 +4,6 @@ Rails.application.routes.draw do
   namespace :telegram do
     resources :webhooks, only: %i[create]
   end
+
+  resource :up, only: :show
 end
