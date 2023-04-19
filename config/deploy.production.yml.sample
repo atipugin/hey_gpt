@@ -1,0 +1,15 @@
+---
+servers:
+  web:
+    hosts:
+      - example.com
+    options:
+      "add-host": host.docker.internal:host-gateway
+  job:
+    hosts:
+      - example.com
+    options:
+      "add-host": host.docker.internal:host-gateway
+
+ssh:
+  user: john-doe

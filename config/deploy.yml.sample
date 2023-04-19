@@ -1,0 +1,22 @@
+---
+service: hey_gpt
+image: atipugin/hey_gpt
+servers:
+  web:
+  job:
+    cmd: bundle exec sidekiq -C config/sidekiq.yml
+
+registry:
+  username: john-doe
+  password:
+    - DOCKER_REGISTRY_TOKEN
+
+env:
+  secret:
+    - DATABASE_URL
+    - OPENAI_ACCESS_TOKEN
+    - RAILS_MASTER_KEY
+    - REDIS_URL
+    - SENTRY_DSN
+    - TELEGRAM_BOT_ADMIN_IDS
+    - TELEGRAM_BOT_TOKEN

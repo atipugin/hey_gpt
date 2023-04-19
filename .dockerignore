@@ -1,0 +1,6 @@
+.DS_Store
+/.env*
+/.git/
+/config/master.key
+/log/*
+/tmp/cache
