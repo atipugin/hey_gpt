@@ -14,10 +14,10 @@ module Telegram
     def call
       send_typing_action
 
-      @user.messages_count.increment
       return too_many_messages if @user.too_many_messages?
 
       message = find_or_create_message
+      @user.messages_count.increment if message.previously_new_record?
       conversation = build_conversation_for_message(message)
       ask_gpt_result = OpenAI::AskGPTService.new(conversation:).call
       return ask_gpt_result unless ask_gpt_result.success?
