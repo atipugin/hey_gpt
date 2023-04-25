@@ -5,43 +5,53 @@ module Telegram
     include ActsAsService
     include HasTelegramBot
 
-    attr_reader :message
-
     def initialize(message:)
       @message = message
     end
 
     def call
-      send_typing_action
+      chat = find_or_create_chat
+      user = find_or_create_user
 
-      return handle_unsupported_message if unsupported_message?
-      return handle_bot_command if message.bot_command?
-
-      handle_text_message
+      if bot_command?
+        ProcessBotCommandService.new(message: @message, chat:, user:).call
+      elsif text_message?
+        ProcessTextMessageService.new(message: @message, chat:, user:).call
+      else
+        message_not_supported
+      end
     end
 
     private
 
-    def send_typing_action
-      telegram_bot.api.send_chat_action(chat_id: message.chat.telegram_id, action: 'typing')
+    def find_or_create_chat
+      Chat.find_or_initialize_by(telegram_id: @message.chat.id).tap do |chat|
+        chat.telegram_data = @message.chat.to_compact_hash
+        chat.save!
+      end
     end
 
-    def unsupported_message?
-      message.text.blank?
+    def find_or_create_user
+      return unless @message.from
+
+      User.find_or_initialize_by(telegram_id: @message.from.id).tap do |user|
+        user.telegram_data = @message.from.to_compact_hash
+        user.save!
+      end
     end
 
-    def handle_unsupported_message
-      telegram_bot.api.send_message(chat_id: message.chat.telegram_id, text: t('unsupported_message'))
-
-      Result.new(success?: true)
+    def bot_command?
+      @message.entities&.any? { |e| e.type == 'bot_command' && e.offset.zero? }
     end
 
-    def handle_bot_command
-      ProcessBotCommandService.new(message:).call
+    def text_message?
+      @message.text.present?
     end
 
-    def handle_text_message
-      ProcessTextMessageService.new(message:).call
+    def message_not_supported
+      telegram_bot.api.send_message(chat_id: @message.chat.id, text: t('message_not_supported'))
+
+      failure
     end
   end
 end

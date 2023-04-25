@@ -3,6 +3,14 @@
 module ActsAsService
   Result = Struct.new(:success?, :error, :data)
 
+  def success(data: nil)
+    Result.new(true, nil, data)
+  end
+
+  def failure(error: nil, data: nil)
+    Result.new(false, error, data)
+  end
+
   private
 
   def t(key, opts = {})

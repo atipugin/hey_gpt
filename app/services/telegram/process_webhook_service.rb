@@ -4,14 +4,12 @@ module Telegram
   class ProcessWebhookService
     include ActsAsService
 
-    attr_reader :webhook
-
     def initialize(webhook:)
       @webhook = webhook
     end
 
     def call
-      update = Telegram::Bot::Types::Update.new(webhook)
+      update = Telegram::Bot::Types::Update.new(@webhook)
       result = ProcessUpdateService.new(update:).call
       Sentry.capture_message(result.error, extra: result.data) if result.error
 

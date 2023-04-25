@@ -5,50 +5,55 @@ module Telegram
     include ActsAsService
     include HasTelegramBot
 
-    attr_reader :message
-
-    def initialize(message:)
+    def initialize(message:, chat:, user:)
       @message = message
+      @chat = chat
+      @user = user
     end
 
     def call
-      case message.bot_command
-      when '/start' then handle_start_command
-      when '/reset' then handle_reset_command
-      when '/stats' then handle_stats_command
-      else handle_unsupported_command
+      case bot_command
+      when '/start'
+        handle_start_command
+      when '/reset'
+        handle_reset_command
+      when '/stats'
+        handle_stats_command
+      else
+        failure
       end
     end
 
     private
 
-    def handle_start_command
-      telegram_bot.api.send_message(chat_id: message.chat.telegram_id, text: t('start.welcome'))
+    def bot_command
+      entity = @message.entities.find { |e| e.type == 'bot_command' && e.offset.zero? }
+      return unless entity
 
-      Result.new(success?: true)
+      @message.text[entity.offset, entity.length]
+    end
+
+    def handle_start_command
+      telegram_bot.api.send_message(chat_id: @chat.telegram_id, text: t('start.welcome'))
+
+      success
     end
 
     def handle_reset_command
-      message.chat.messages.destroy_all
-      telegram_bot.api.send_message(chat_id: message.chat.telegram_id, text: t('reset.done'))
+      @chat.messages.delete_all
+      telegram_bot.api.send_message(chat_id: @chat.telegram_id, text: t('reset.done'))
 
-      Result.new(success?: true)
+      success
     end
 
     def handle_stats_command
-      return handle_unsupported_command unless message.user.admin?
+      return failure unless @user.admin?
 
       users_count = User.count
       messages_count = Message.count
-      telegram_bot.api.send_message(chat_id: message.chat.telegram_id,
-                                    text: t('stats.text', users_count:,
-                                                          messages_count:))
+      telegram_bot.api.send_message(chat_id: @chat.telegram_id, text: t('stats.text', users_count:, messages_count:))
 
-      Result.new(success?: true)
-    end
-
-    def handle_unsupported_command
-      Result.new(success?: false)
+      success
     end
   end
 end

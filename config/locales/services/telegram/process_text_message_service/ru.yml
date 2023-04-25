@@ -1,5 +1,0 @@
----
-ru:
-  services:
-    telegram/process_text_message_service:
-      something_went_wrong: 😵‍💫 Кажется, что-то пошло не так. Попробуем еще раз?
