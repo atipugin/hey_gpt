@@ -6,7 +6,8 @@ namespace :telegram do
     return if url.blank?
 
     client = Telegram::Bot::Client.new(ENV.fetch('TELEGRAM_BOT_TOKEN'))
-    response = client.api.set_webhook(url:, allowed_updates: %w[message])
+    secret_token = ENV.fetch('TELEGRAM_BOT_SECRET_TOKEN')
+    response = client.api.set_webhook(url:, allowed_updates: %w[message], secret_token:)
     # TODO: Handle error response
     puts response
   end
