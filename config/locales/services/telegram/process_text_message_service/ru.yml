@@ -1,0 +1,5 @@
+---
+ru:
+  services:
+    telegram/process_text_message_service:
+      too_many_messages: ☹️ У меня есть ограничение - не более %{limit} сообщений в час. Попробуй чуть позже.

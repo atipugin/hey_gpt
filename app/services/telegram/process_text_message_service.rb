@@ -12,6 +12,11 @@ module Telegram
     end
 
     def call
+      send_typing_action
+
+      @user.messages_count.increment
+      return too_many_messages if @user.too_many_messages?
+
       message = find_or_create_message
       conversation = build_conversation_for_message(message)
       ask_gpt_result = OpenAI::AskGPTService.new(conversation:).call
@@ -25,6 +30,19 @@ module Telegram
     end
 
     private
+
+    def send_typing_action
+      telegram_bot.api.send_chat_action(chat_id: @chat.telegram_id, action: 'typing')
+    end
+
+    def too_many_messages
+      telegram_bot.api.send_message(
+        chat_id: @chat.telegram_id,
+        text: t('too_many_messages', limit: User::MESSAGES_PER_HOUR_LIMIT)
+      )
+
+      failure
+    end
 
     def find_or_create_message
       @chat.messages.find_or_initialize_by(telegram_id: @message.message_id).tap do |message|

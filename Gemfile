@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 ruby '3.2.1'
 
 gem 'bootsnap', require: false
+gem 'kredis'
 gem 'pg', '~> 1.1'
 gem 'pry-rails'
 gem 'puma', '~> 5.0'
