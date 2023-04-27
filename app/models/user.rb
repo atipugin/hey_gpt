@@ -15,7 +15,7 @@
 #  index_users_on_telegram_id  (telegram_id) UNIQUE
 #
 class User < ApplicationRecord
-  MESSAGES_PER_HOUR_LIMIT = 30
+  MESSAGES_PER_HOUR_LIMIT = 20
 
   has_many :messages, dependent: :destroy
 
