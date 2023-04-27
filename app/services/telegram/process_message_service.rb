@@ -18,7 +18,7 @@ module Telegram
       elsif text_message?
         ProcessTextMessageService.new(message: @message, chat:, user:).call
       else
-        message_not_supported
+        message_not_supported(chat:)
       end
     end
 
@@ -48,8 +48,8 @@ module Telegram
       @message.text.present?
     end
 
-    def message_not_supported
-      telegram_bot.api.send_message(chat_id: @message.chat.id, text: t('message_not_supported'))
+    def message_not_supported(chat:)
+      reply_to(chat:, text: t('message_not_supported'))
 
       failure
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_25_070159) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_27_171915) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_25_070159) do
     t.datetime "updated_at", null: false
     t.bigint "telegram_id", null: false
     t.jsonb "telegram_data", null: false
+    t.boolean "blocked", default: false, null: false
     t.index ["telegram_id"], name: "index_chats_on_telegram_id", unique: true
   end
 

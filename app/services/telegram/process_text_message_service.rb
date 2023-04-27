@@ -22,7 +22,9 @@ module Telegram
       ask_gpt_result = OpenAI::AskGPTService.new(conversation:).call
       return ask_gpt_result unless ask_gpt_result.success?
 
-      response = telegram_bot.api.send_message(chat_id: @chat.telegram_id, text: ask_gpt_result.data)
+      response = reply_to(chat: @chat, text: ask_gpt_result.data)
+      return failure unless response
+
       message_sent = Telegram::Bot::Types::Message.new(response['result'])
       @chat.messages.create!(telegram_id: message_sent.message_id, telegram_data: message_sent.to_compact_hash)
 
@@ -36,10 +38,7 @@ module Telegram
     end
 
     def too_many_messages
-      telegram_bot.api.send_message(
-        chat_id: @chat.telegram_id,
-        text: t('too_many_messages', limit: User::MESSAGES_PER_HOUR_LIMIT)
-      )
+      reply_to(chat: @chat, text: t('too_many_messages', limit: User::MESSAGES_PER_HOUR_LIMIT))
 
       failure
     end

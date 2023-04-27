@@ -34,14 +34,15 @@ module Telegram
     end
 
     def handle_start_command
-      telegram_bot.api.send_message(chat_id: @chat.telegram_id, text: t('start.welcome'))
+      @chat.unblock if @chat.blocked?
+      reply_to(chat: @chat, text: t('start.welcome'))
 
       success
     end
 
     def handle_reset_command
       @chat.messages.delete_all
-      telegram_bot.api.send_message(chat_id: @chat.telegram_id, text: t('reset.done'))
+      reply_to(chat: @chat, text: t('reset.done'))
 
       success
     end
@@ -51,7 +52,7 @@ module Telegram
 
       users_count = User.count
       messages_count = Message.count
-      telegram_bot.api.send_message(chat_id: @chat.telegram_id, text: t('stats.text', users_count:, messages_count:))
+      reply_to(chat: @chat, text: t('stats.text', users_count:, messages_count:))
 
       success
     end
