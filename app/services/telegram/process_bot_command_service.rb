@@ -51,8 +51,9 @@ module Telegram
       return failure unless @user.admin?
 
       users_count = User.count
+      active_users_count = Message.select(:user_id).distinct.where(created_at: 1.day.ago..).count
       messages_count = Message.count
-      reply_to(chat: @chat, text: t('stats.text', users_count:, messages_count:))
+      reply_to(chat: @chat, text: t('stats.text', users_count:, active_users_count:, messages_count:))
 
       success
     end
