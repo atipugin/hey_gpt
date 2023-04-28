@@ -4,7 +4,7 @@ module HasTelegramBot
   def reply_to(chat:, text:)
     return if chat.blocked?
 
-    text.scan(/.{1,4096}/).map do |chunk|
+    text.scan(/.{1,4096}/m).map do |chunk|
       telegram_bot.api.send_message(chat_id: chat.telegram_id, text: chunk)
     end
   rescue Telegram::Bot::Exceptions::ResponseError => e
