@@ -21,7 +21,7 @@ class Conversation
   end
 
   def full?
-    @items.pluck(:tokens_count).sum > MAX_TOKENS
+    overall_tokens_count > MAX_TOKENS
   end
 
   def to_chatgpt_messages
@@ -32,6 +32,12 @@ class Conversation
 
   def add_message(type, text)
     tokens_count = Tokenizer.instance.gpt2.encode(text).tokens.count
+    return if overall_tokens_count + tokens_count > MAX_TOKENS
+
     @items << Item.new(type, text, tokens_count)
+  end
+
+  def overall_tokens_count
+    @items.pluck(:tokens_count).sum
   end
 end
