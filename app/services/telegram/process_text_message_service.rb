@@ -22,11 +22,13 @@ module Telegram
       ask_gpt_result = OpenAI::AskGPTService.new(conversation:).call
       return ask_gpt_result unless ask_gpt_result.success?
 
-      response = reply_to(chat: @chat, text: ask_gpt_result.data)
-      return failure unless response
+      responses = reply_to(chat: @chat, text: ask_gpt_result.data)
+      return failure if responses.blank?
 
-      message_sent = Telegram::Bot::Types::Message.new(response['result'])
-      @chat.messages.create!(telegram_id: message_sent.message_id, telegram_data: message_sent.to_compact_hash)
+      responses.each do |response|
+        message_sent = Telegram::Bot::Types::Message.new(response['result'])
+        @chat.messages.create!(telegram_id: message_sent.message_id, telegram_data: message_sent.to_compact_hash)
+      end
 
       success
     end
