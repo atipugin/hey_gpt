@@ -6,7 +6,9 @@ class Conversation
   TYPE_USER = 'user'
   TYPE_AI = 'ai'
   TYPE_TO_CHATGPT_ROLES = { TYPE_USER => 'user', TYPE_AI => 'assistant' }.freeze
-  MAX_TOKENS = 4096
+  # Slightly below actual limit (4096) because of difference between gpt2 (used
+  # here) and tiktoken (used by ChatGPT)
+  MAX_TOKENS = 4_000
 
   def initialize
     @items = []
