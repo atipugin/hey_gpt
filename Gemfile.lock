@@ -110,6 +110,7 @@ GEM
     faraday-net_http (3.0.2)
     globalid (1.1.0)
       activesupport (>= 5.0)
+    hashids (1.0.6)
     httparty (0.21.0)
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)
@@ -256,6 +257,7 @@ DEPENDENCIES
   annotate
   bootsnap
   dotenv-rails
+  hashids
   kredis
   pg (~> 1.1)
   pry-rails

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module HasTelegramBot
-  def reply_to(chat:, text:)
+  def reply_to(chat:, text:, **opts)
     return if chat.blocked?
 
     text.scan(/.{1,4096}/m).map do |chunk|
-      telegram_bot.api.send_message(chat_id: chat.telegram_id, text: chunk)
+      telegram_bot.api.send_message(chat_id: chat.telegram_id, text: chunk, **opts)
     end
   rescue Telegram::Bot::Exceptions::ResponseError => e
     case e.error_code

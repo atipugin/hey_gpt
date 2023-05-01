@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_27_171915) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_01_144632) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -35,12 +35,24 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_171915) do
     t.index ["user_id"], name: "index_messages_on_user_id"
   end
 
+  create_table "referrals", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "referrer_id", null: false
+    t.bigint "referee_id", null: false
+    t.index ["referee_id"], name: "index_referrals_on_referee_id", unique: true
+    t.index ["referrer_id"], name: "index_referrals_on_referrer_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "telegram_id", null: false
     t.jsonb "telegram_data", null: false
+    t.integer "messages_limit", default: 10, null: false
     t.index ["telegram_id"], name: "index_users_on_telegram_id", unique: true
   end
 
+  add_foreign_key "referrals", "users", column: "referee_id"
+  add_foreign_key "referrals", "users", column: "referrer_id"
 end

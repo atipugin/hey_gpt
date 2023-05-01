@@ -19,6 +19,8 @@ module Telegram
         handle_reset_command
       when '/stats'
         handle_stats_command
+      when '/me'
+        handle_me_command
       else
         failure
       end
@@ -35,6 +37,10 @@ module Telegram
 
     def handle_start_command
       @chat.unblock if @chat.blocked?
+      if (match = @message.text.match(%r{^/start\s+(\w+)}))
+        Users::ApplyReferralBonusService.new(user: @user, referrer_id: match[1]).call
+      end
+
       reply_to(chat: @chat, text: t('start.welcome'))
 
       success
@@ -54,6 +60,18 @@ module Telegram
       active_users_count = Message.select(:user_id).distinct.where(created_at: 1.day.ago..).count
       messages_count = Message.count
       reply_to(chat: @chat, text: t('stats.text', users_count:, active_users_count:, messages_count:))
+
+      success
+    end
+
+    def handle_me_command
+      messages_limit = @user.messages_limit
+      messages_left = messages_limit - @user.messages_count.value
+      reply_to(
+        chat: @chat,
+        text: t('me.text', messages_limit:, messages_left:, referral_url: @user.referral_url),
+        disable_web_page_preview: true
+      )
 
       success
     end

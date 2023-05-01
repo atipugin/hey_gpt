@@ -40,7 +40,7 @@ module Telegram
     end
 
     def too_many_messages
-      reply_to(chat: @chat, text: t('too_many_messages', limit: User::MESSAGES_PER_HOUR_LIMIT))
+      reply_to(chat: @chat, text: t('too_many_messages', limit: @user.messages_limit))
 
       failure
     end
