@@ -40,7 +40,11 @@ module Telegram
     end
 
     def too_many_messages
-      reply_to(chat: @chat, text: t('too_many_messages', limit: @user.messages_limit))
+      reply_to(
+        chat: @chat,
+        text: t('too_many_messages', limit: @user.messages_limit, referral_url: @user.referral_url),
+        disable_web_page_preview: true
+      )
 
       failure
     end
