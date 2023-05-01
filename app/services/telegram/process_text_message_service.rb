@@ -20,7 +20,15 @@ module Telegram
       @user.messages_count.increment if message.previously_new_record?
       conversation = build_conversation_for_message(message)
       ask_gpt_result = OpenAI::AskGPTService.new(conversation:).call
-      return ask_gpt_result unless ask_gpt_result.success?
+      unless ask_gpt_result.success?
+        reply_to(
+          chat: @chat,
+          text: t('something_went_wrong'),
+          reply_to_message_id: message.telegram_id,
+          allow_sending_without_reply: true
+        )
+        return ask_gpt_result
+      end
 
       responses = reply_to(chat: @chat, text: ask_gpt_result.data)
       return failure if responses.blank?

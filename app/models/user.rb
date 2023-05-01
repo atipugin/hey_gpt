@@ -18,8 +18,6 @@
 class User < ApplicationRecord
   include HasHashid
 
-  MESSAGES_PER_HOUR_LIMIT = 15
-
   has_many :messages, dependent: :destroy
 
   validates :telegram_id, presence: true, uniqueness: true
