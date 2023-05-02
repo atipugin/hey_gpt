@@ -14,6 +14,8 @@ module Users
       return failure unless referrer
       return failure if Referral.exists?(referee: @user)
       return failure if referrer == @user
+      return failure if @user.created_at >= referrer.created_at
+      return failure if @user.created_at < 1.hour.ago
 
       ActiveRecord::Base.transaction do
         Referral.create!(referrer:, referee: @user)
