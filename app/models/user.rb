@@ -9,7 +9,7 @@
 #  updated_at     :datetime         not null
 #  telegram_id    :bigint           not null
 #  telegram_data  :jsonb            not null
-#  messages_limit :integer          default(10), not null
+#  messages_limit :integer          default(5), not null
 #
 # Indexes
 #
