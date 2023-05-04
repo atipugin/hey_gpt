@@ -14,7 +14,7 @@ module ActsAsService
   def capture_result_error(result)
     return unless result.error
 
-    Sentry.capture_exception(result.error, extra: result.data)
+    Sentry.capture_message(result.error, extra: result.data)
   end
 
   private
