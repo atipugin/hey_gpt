@@ -11,7 +11,7 @@ module Telegram
     def call
       update = Telegram::Bot::Types::Update.new(@webhook)
       result = ProcessUpdateService.new(update:).call
-      Sentry.capture_message(result.error, extra: result.data) if result.error
+      capture_result_error(result)
 
       result
     end

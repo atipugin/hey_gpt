@@ -38,7 +38,7 @@ module Telegram
     def handle_start_command
       @chat.unblock if @chat.blocked?
       if (match = @message.text.match(%r{^/start\s+(\w+)}))
-        Users::ApplyReferralBonusService.new(user: @user, referrer_id: match[1]).call
+        capture_result_error(Users::ApplyReferralBonusService.new(user: @user, referrer_id: match[1]).call)
       end
 
       reply_to(chat: @chat, text: t('start.welcome'))
