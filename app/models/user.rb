@@ -23,7 +23,7 @@ class User < ApplicationRecord
   validates :telegram_id, presence: true, uniqueness: true
   validates :telegram_data, presence: true
 
-  kredis_counter :messages_count, expires_in: 1.hour
+  kredis_counter :messages_count, expires_in: 2.hours
 
   def admin?
     ENV.fetch('TELEGRAM_BOT_ADMIN_IDS').split(',').map(&:to_i).include?(telegram_id)
