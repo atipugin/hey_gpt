@@ -238,9 +238,9 @@ GEM
       faraday-multipart (~> 1.0)
       zeitwerk (~> 2.6)
     thor (1.2.1)
+    tiktoken_ruby (0.0.5-arm64-darwin)
+    tiktoken_ruby (0.0.5-x86_64-linux)
     timeout (0.3.2)
-    tokenizers (0.3.2-arm64-darwin)
-    tokenizers (0.3.2-x86_64-linux)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
@@ -270,7 +270,7 @@ DEPENDENCIES
   sentry-sidekiq
   sidekiq
   telegram-bot-ruby
-  tokenizers
+  tiktoken_ruby
 
 RUBY VERSION
    ruby 3.2.1p31

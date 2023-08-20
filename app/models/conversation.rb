@@ -33,7 +33,7 @@ class Conversation
   private
 
   def add_message(type, text)
-    tokens_count = Tokenizer.instance.gpt2.encode(text).tokens.count
+    tokens_count = Tiktoken.encoding_for_model('gpt-3.5-turbo').encode(text).count
     return if overall_tokens_count + tokens_count > MAX_TOKENS
 
     @items << Item.new(type, text, tokens_count)

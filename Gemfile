@@ -16,7 +16,7 @@ gem 'sentry-rails'
 gem 'sentry-sidekiq'
 gem 'sidekiq'
 gem 'telegram-bot-ruby', require: 'telegram/bot'
-gem 'tokenizers'
+gem 'tiktoken_ruby'
 
 group :development, :test do
   gem 'dotenv-rails'
