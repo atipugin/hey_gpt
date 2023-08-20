@@ -2,7 +2,7 @@ ARG RUBY_VERSION=3.2.1
 FROM ruby:${RUBY_VERSION}-slim-bullseye
 
 RUN apt-get update && \
-  apt-get install -y build-essential libpq-dev && \
+  apt-get install -y build-essential libpq-dev curl && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
